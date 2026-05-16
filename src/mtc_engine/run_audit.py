@@ -320,12 +320,12 @@ def _parse_perturbations(values: Sequence[str]) -> Mapping[str, ExactScalar]:
 def _format_mpf(value: object, digits: int) -> str:
     """Format high-precision values without converting through float."""
 
-    if isinstance(value, mpmath.ctx_mp_python.mpc):
+    if isinstance(value, mpmath.mpc):
         real = _format_mpf(mpmath.re(value), digits)
         imaginary = _format_mpf(abs(mpmath.im(value)), digits)
         sign = "+" if mpmath.im(value) >= 0 else "-"
         return f"({real} {sign} {imaginary}j)"
-    if isinstance(value, mpmath.ctx_mp_python.mpf):
+    if isinstance(value, mpmath.mpf):
         if mpmath.isinf(value):
             return "+inf" if value > 0 else "-inf"
         if mpmath.isnan(value):
