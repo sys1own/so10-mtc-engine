@@ -588,7 +588,7 @@ def _parse_tex_number(value: str) -> mpmath.mpf:
 def _coerce_tau(tau: TauLike | None) -> mpmath.mpc:
     if tau is None:
         return mpmath.mpc("0", "1")
-    if isinstance(tau, mpmath.ctx_mp_python.mpc):
+    if isinstance(tau, mpmath.mpc):
         return tau
     if isinstance(tau, str):
         return mpmath.mpc(tau)
