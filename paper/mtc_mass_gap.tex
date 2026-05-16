@@ -1,0 +1,496 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{array}
+
+\IfFileExists{context/physics_constants.tex}{%
+  \input{context/physics_constants.tex}%
+}{%
+  \input{../context/physics_constants.tex}%
+}
+
+\allowdisplaybreaks
+
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\Vir}{\mathrm{Vir}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\FP}{\operatorname{FP}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\qdim}{\operatorname{qdim}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\hilb}{\mathcal{H}}
+\newcommand{\block}{\mathfrak{B}_{\modularHorizonBits}}
+\newcommand{\weights}{P_+^k}
+\newcommand{\fusion}{\mathcal{N}}
+\newcommand{\noiseWall}{10^{-199}}
+\newcommand{\Eclosure}{\mathcal{E}}
+
+\title{Topological Mass-Gap Generation: First-Principles Spectral Invariants from \(SO(10)_{312}\) Modular Tensor Category Traces}
+\author{Spectral-Invariants-MTC Working Draft}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This manuscript gives a self-contained algebraic layout for mass-gap generation by finite-capacity modular tensor category traces.  The construction uses the anomaly-free branch
+\[
+  \SO(10)_{\benchmarkParentLevel}
+  \supset
+  \SU(2)_{\benchmarkLeptonLevel}\times\SU(3)_{\benchmarkQuarkLevel},
+\]
+truncates the affine Kac--Moody current-cylinder tower by the screen budget \(N=\modularHorizonBits\), and fixes the geometric prefactor by the branch constant \(\simplexPrefactor\).  No late-time dynamical variable, fitted fluid parameter, or metric-expansion ansatz enters the argument.  The admissible data are finite root systems, integrable weights, modular \(S\)-matrices, Verlinde fusion coefficients, Frobenius--Perron dimensions, and exact loop-trace closure residues.
+\end{abstract}
+
+\section{Notation and Thematic Quarantine}
+
+\subsection{Quarantine statement}
+This paper completely discards expanding spacetime metrics, scale factors, Hubble functions, late-time fluid variations, and all continuous cosmological state variables.  There is no operational role for \(a(t)\), \(H(t)\), \(w(t)\), \(\rho(t)\), or any time-evolved stress-fluid ansatz.  The physical object is instead a frozen, static error-correcting block \(\block\), whose admissible states are topological sectors and whose stability is measured by exact modular closure.
+
+The screen capacity is not a clock, not an equation-of-state dial, and not an empirical scale setter.  It is the finite register constraint
+\begin{equation}
+  N=\modularHorizonBits,
+  \qquad
+  N_{\max}=\maxComplexityCapacity,
+  \qquad
+  \varepsilon_N=N^{-1},
+  \label{eq:screen-budget}
+\end{equation}
+with \(\lambda_{\mathrm{holo}}=\lambdaHoloMetersInverseSquared\) recorded only as a context constant, not as a dynamical background.  The completion residue is likewise fixed by
+\begin{equation}
+\begin{aligned}
+  c_{\mathrm{dark}}&=\cDarkCompletionExact,
+  &c_{\mathrm{dark}}^{\mathrm{display}}&=\cDarkCompletionFull,\\
+  \alpha_{\mathrm{surf}}&=\alphaSurfBenchmarkExact,
+  &\alpha_{\mathrm{surf}}^{\mathrm{display}}&=\alphaSurfBenchmarkDecimal.
+\end{aligned}
+  \label{eq:context-constants}
+\end{equation}
+All constants in \eqref{eq:screen-budget}--\eqref{eq:context-constants} are imported from \texttt{context/physics\_constants.tex}; the notation is deliberately synchronized with that file.
+
+\subsection{Branch notation}
+Let \(\mathfrak{g}\) be simply laced, with rank \(r\), Cartan matrix \(C\), Weyl group \(W\), positive roots \(\Delta_+\), Weyl vector \(\rho\), highest root \(\theta\), dual Coxeter number \(h^\vee\), and affine level \(k\).  Dominant integrable weights are
+\begin{equation}
+  P_+^k(\mathfrak{g})
+  =\{\lambda=\sum_{i=1}^r\lambda_i\omega_i:\lambda_i\in\mathbb{Z}_{\ge0},\; (\lambda,\theta)\le k\}.
+  \label{eq:integrable-weights}
+\end{equation}
+The branch data are fixed as
+\begin{equation}
+\begin{array}{c|c|c|c|c}
+\text{sector} & \mathfrak{g} & k & h^\vee & \text{highest-root marks} \\
+\midrule
+\text{parent} & D_5\cong\mathfrak{so}(10) & \benchmarkParentLevel & 8 & (1,2,2,1,1) \\
+\text{lepton block} & A_1\cong\mathfrak{su}(2) & \benchmarkLeptonLevel & 2 & (1) \\
+\text{quark block} & A_2\cong\mathfrak{su}(3) & \benchmarkQuarkLevel & 3 & (1,1)
+\end{array}
+\label{eq:branch-data}
+\end{equation}
+and the framing lock is exact:
+\begin{equation}
+  \frac{\benchmarkParentLevel}{2 \times \benchmarkLeptonLevel}=6,
+  \qquad
+  \frac{\benchmarkParentLevel}{3 \times \benchmarkQuarkLevel}=13,
+  \qquad
+  \Delta_{\mathrm{fr}}=0.
+  \label{eq:framing-lock}
+\end{equation}
+
+\section{Finite Kac--Moody Current Reduction Under the Screen Budget}
+
+The untruncated cylinder tower is not a freely generated Virasoro oscillator tower.  It is the negative-mode tower of the affine Kac--Moody current algebra \(\widehat{\mathfrak{g}}_k\), generated by \(J^a_m\) with \(a=1,\ldots,\dim\mathfrak{g}\) and
+\begin{equation}
+  [J^a_m,J^b_n]
+  = f^{abc} J^c_{m+n}+m k\,\delta^{ab}\delta_{m+n,0},
+  \qquad m,n\in\mathbb{Z}.
+  \label{eq:current-algebra}
+\end{equation}
+The Sugawara stress tensor supplies the Virasoro bookkeeping of conformal weights and central charge, but the finite screen truncates the current modes \(J^a_{-n}\), not an independent pure-Virasoro basis.  For a WZW sector \((\mathfrak{g},k)\),
+\begin{equation}
+\begin{aligned}
+  c_{\mathfrak{g},k}
+    &=\frac{k\dim\mathfrak{g}}{k+h^\vee},\\
+  h_\lambda
+    &=\frac{(\lambda,\lambda+2\rho)}{2(k+h^\vee)},
+    \qquad \lambda\in P_+^k(\mathfrak{g}).
+\end{aligned}
+\label{eq:central-charge-weight}
+\end{equation}
+For \(q=e^{2\pi\ii\tau}\), \(\operatorname{Im}\tau>0\), the finite oscillator depth is
+\begin{equation}
+  L_N(\tau)=\left\lfloor\frac{\log N}{-\log |q|}\right\rfloor,
+  \qquad
+  |q|^{L_N}\ge N^{-1}>|q|^{L_N+1}.
+  \label{eq:oscillator-depth}
+\end{equation}
+The capacity projection is therefore the hard current-algebra map
+\begin{equation}
+  \Pi_N:U(\widehat{\mathfrak{g}}_k)\longrightarrow U_N(\widehat{\mathfrak{g}}_k),
+  \qquad
+  \Pi_N(J^a_{-n})=
+  \begin{cases}
+    J^a_{-n}, & 1\le n\le L_N(\tau),\\
+    0, & n>L_N(\tau).
+  \end{cases}
+  \label{eq:current-projection}
+\end{equation}
+The finite current-cylinder module is
+\begin{equation}
+  \hilb_{\lambda,N}
+  =\operatorname{span}\{J^{a_1}_{-n_1}\cdots J^{a_s}_{-n_s}|\lambda\rangle:
+    1\le n_j\le L_N(\tau),\;1\le a_j\le\dim\mathfrak{g}\},
+  \label{eq:finite-module}
+\end{equation}
+and the truncated VZW loop character is
+\begin{equation}
+\boxed{
+  \chi_{\lambda,N}^{\mathfrak{g},k}(\tau)
+  =d_\lambda q^{h_\lambda-c_{\mathfrak{g},k}/24}
+   \prod_{n=1}^{L_N(\tau)}(1-q^n)^{-\dim\mathfrak{g}}.
+}
+\label{eq:truncated-character}
+\end{equation}
+The exponent \(-\dim\mathfrak{g}\) in \eqref{eq:truncated-character} is fixed by the \(\dim\mathfrak{g}\) current colors at every positive oscillator depth: for each \(n\), the screened current oscillators contribute \(\prod_{a=1}^{\dim\mathfrak{g}}(1-q^n)^{-1}=(1-q^n)^{-\dim\mathfrak{g}}\).  This is the same current-algebra convention used by the companion Python audit scripts; the Virasoro data enter only through the Sugawara factors \(c_{\mathfrak{g},k}\) and \(h_\lambda\).
+The diagonal finite-screen torus trace is
+\begin{equation}
+  Z_N^{\mathfrak{g},k}(\tau)
+  =\sum_{\lambda\in\mathcal{B}}
+    |\chi_{\lambda,N}^{\mathfrak{g},k}(\tau)|^2,
+  \label{eq:torus-trace}
+\end{equation}
+where \(\mathcal{B}=P_+^k(\mathfrak{g})\) for tractable sectors and \(\mathcal{B}\) is the audited \(D_5\) block set for the parent sector.
+
+\section{Verlinde Fusion and Frobenius--Perron Data}
+
+\subsection{Kac--Peterson matrix and Verlinde grid}
+For \(\lambda,\mu\in P_+^k(\mathfrak{g})\), the modular matrix is
+\begin{equation}
+  S_{\lambda\mu}^{\mathfrak{g},k}
+  =\frac{\ii^{|\Delta_+|}}{\sqrt{|P/Q|(k+h^\vee)^r}}
+    \sum_{w\in W}\epsilon(w)
+    \exp\left[-\frac{2\pi\ii}{k+h^\vee}(w(\lambda+\rho),\mu+\rho)\right].
+  \label{eq:kac-peterson}
+\end{equation}
+The Verlinde fusion rules are typeset as the coefficient grid
+\begin{equation}
+\begin{aligned}
+  \relax[\lambda]\otimes[\mu]
+    &=\bigoplus_{\nu\in P_+^k(\mathfrak{g})}N_{\lambda\mu}^{\nu}[\nu],\\
+  N_{\lambda\mu}^{\nu}
+    &=\sum_{\sigma\in P_+^k(\mathfrak{g})}
+      \frac{S_{\lambda\sigma}S_{\mu\sigma}\overline{S_{\nu\sigma}}}{S_{0\sigma}},\\
+  (\fusion_\lambda)_{\mu}^{\ \nu}
+    &=N_{\lambda\mu}^{\nu},\\
+  \fusion_\lambda\fusion_\mu
+    &=\sum_{\nu}N_{\lambda\mu}^{\nu}\fusion_\nu,
+    \qquad N_{\lambda\mu}^{\nu}\in\mathbb{Z}_{\ge0}.
+\end{aligned}
+\label{eq:verlinde-grid}
+\end{equation}
+
+\subsection{Primary block cardinalities}
+The exact primary block cardinalities are fixed by the integrable-weight count
+\begin{equation}
+  |P_+^k(\mathfrak{g})|
+  =\#\{\lambda\in\mathbb{Z}_{\ge0}^{r}:(\lambda,\theta)\le k\}.
+\end{equation}
+For the benchmark branch this gives
+\begin{equation}
+\begin{array}{c|c|c|c}
+\text{sector} & \text{root type} & \text{level} & |P_+^k(\mathfrak{g})| \\
+\midrule
+\SU(2)_{\benchmarkLeptonLevel} & A_1 & \benchmarkLeptonLevel & 27 \\
+\SU(3)_{\benchmarkQuarkLevel} & A_2 & \benchmarkQuarkLevel & 45 \\
+\SO(10)_{\benchmarkParentLevel} & D_5 & \benchmarkParentLevel & 6{,}563{,}729{,}615
+\end{array}
+\label{eq:primary-cardinalities}
+\end{equation}
+The last cardinality is a definitionally finite but computationally guarded parent spectrum; no continuum approximation is substituted for it.
+
+\subsection{Frobenius--Perron dimension matrix grid}
+Each nonnegative fusion matrix has the common positive eigenvector
+\begin{equation}
+  \mathbf{d}=(d_\lambda)_{\lambda\in P_+^k},
+  \qquad
+  d_\lambda=\frac{S_{\lambda0}}{S_{00}},
+  \qquad d_0=1.
+  \label{eq:qdim-vector}
+\end{equation}
+The dimension grid is
+\begin{equation}
+\begin{aligned}
+  \fusion_\alpha\mathbf{d} &= d_\alpha\mathbf{d},\\
+  D_{\mathrm{FP}} &= \diag(d_\lambda),\\
+  \mathcal{D}_{\mathfrak{g},k}
+    &=\left(\sum_{\lambda\in P_+^k}d_\lambda^2\right)^{1/2},\\
+  \FP(\fusion_\alpha)&=d_\alpha.
+\end{aligned}
+\label{eq:fp-grid}
+\end{equation}
+For the \(A_1\) fundamental block, the full \(\SU(2)_{\benchmarkLeptonLevel}\) matrix is the path adjacency operator on 27 vertices:
+\begingroup
+\scriptsize
+\setcounter{MaxMatrixCols}{27}
+\setlength{\arraycolsep}{1.05pt}
+\renewcommand{\arraystretch}{0.82}
+\begin{equation}
+\begin{gathered}
+\fusion_{(1)}^{A_1,\benchmarkLeptonLevel}
+=
+\begin{pmatrix}
+0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1&0\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0&1\\
+0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&0&1&0
+\end{pmatrix}_{27\times27},\\[2pt]
+\FP(\fusion_{(1)}^{A_1,\benchmarkLeptonLevel})=2\cos\frac{\pi}{28}.
+\end{gathered}
+\label{eq:su2-path-adjacency}
+\end{equation}
+\endgroup
+For \(A_2\) and \(D_5\), the matrices are still the Verlinde matrices of \eqref{eq:verlinde-grid}; the cardinalities in \eqref{eq:primary-cardinalities} determine the exact block sizes.
+
+\section{Geometric Prefactor and the Negative-Quarter Exponent}
+
+The branch prefactor is recorded in the synchronized constant
+\begin{equation}
+  \kappa_{D_5}=\simplexPrefactor.
+  \label{eq:simplex-prefactor}
+\end{equation}
+Its spectral construction may be written as one static block array, with the rational factors of the \(D_5\) spinor-retention ratio displayed explicitly:
+\begin{equation}
+\begin{aligned}
+  \mathcal{D}_{A_1,\benchmarkLeptonLevel}
+    &=\frac{\sqrt{(\benchmarkLeptonLevel+2)/2}}
+            {\sin\!\left(\pi/(\benchmarkLeptonLevel+2)\right)},\\
+  \beta_{\benchmarkLeptonLevel}
+    &=\frac{1}{2}\log\mathcal{D}_{A_1,\benchmarkLeptonLevel},\\
+  A_{D_5}
+    &=\frac{160\sqrt{10}}{1521}
+     =\frac{2^{5}\cdot5\sqrt{10}}{3^{2}\cdot13^{2}},\\
+  R_{\mathrm{spin}}
+    &=\frac{347-8\beta_{\benchmarkLeptonLevel}^{2}}{351}
+     =\frac{(3^{3}\cdot13-4)-2^{3}\beta_{\benchmarkLeptonLevel}^{2}}{3^{3}\cdot13},\\
+  \kappa_{D_5}
+    &=\left(\frac{16}{5}A_{D_5}R_{\mathrm{spin}}\right)^{1/2}
+     =\left(
+        \frac{2^{4}}{5}\cdot
+        \frac{2^{5}\cdot5\sqrt{10}}{3^{2}\cdot13^{2}}\cdot
+        \frac{(3^{3}\cdot13-4)-2^{3}\beta_{\benchmarkLeptonLevel}^{2}}{3^{3}\cdot13}
+       \right)^{1/2}.
+\end{aligned}
+\label{eq:kappa-construction}
+\end{equation}
+The finite-capacity trace identity is quartic:
+\begin{equation}
+\boxed{
+  \Theta_N(m)=N\left(\frac{m}{\kappa_{D_5}M_P}\right)^4=1.
+}
+\label{eq:quartic-trace}
+\end{equation}
+Therefore
+\begin{equation}
+  m=\kappa_{D_5}M_PN^{-1/4}
+  =\simplexPrefactor\,M_P(\modularHorizonBits)^{-1/4}.
+  \label{eq:mass-gap}
+\end{equation}
+Taking the logarithmic differential of \eqref{eq:quartic-trace} gives
+\begin{equation}
+\begin{aligned}
+  \log\Theta_N &= \log N+4\log m-4\log(\kappa_{D_5}M_P),\\
+  \dd\log\Theta_N&=0,\\
+  4\,\dd\log m&=-\dd\log N,\\
+  \frac{\dd\log m}{\dd\log N}&=-\frac{1}{4}.
+\end{aligned}
+\label{eq:negative-quarter}
+\end{equation}
+The exponent is a trace consequence of finite information density.  It is not extracted from an external scaling fit.
+
+\section{Modular-T Closure and Framing-Anomaly Exclusion}
+
+Under \(T:\tau\mapsto\tau+1\), a primary block transforms by
+\begin{equation}
+  \chi_{\lambda,N}(\tau+1)
+  =e^{2\pi\ii(h_\lambda-c/24)}\chi_{\lambda,N}(\tau).
+  \label{eq:t-character}
+\end{equation}
+The diagonal torus trace is invariant precisely when the framing anomaly vanishes:
+\begin{equation}
+\begin{aligned}
+  Z_N(\tau+1)
+    &=\sum_{\lambda\in\mathcal{B}}
+      \left|e^{2\pi\ii(h_\lambda-c/24)}e^{2\pi\ii\Delta_{\mathrm{fr}}}\chi_{\lambda,N}(\tau)\right|^2,\\
+  \Delta_{\mathrm{fr}}&=0,\\
+  Z_N(\tau+1)-Z_N(\tau)&=0.
+\end{aligned}
+\label{eq:t-invariance}
+\end{equation}
+The anomaly-free identities in \eqref{eq:framing-lock} are discrete constraints.  A nonzero \(\Delta_{\mathrm{fr}}\) is an inadmissible branch coordinate, not a perturbative deformation.
+
+\section{Stiff Jacobian Singularity and Precision Requirement}
+
+\subsection{Precision wall}
+The audit normalizes every closure residual \(R_i\) by the exact completion residue
+\begin{equation}
+  c_{\mathrm{dark}}=\cDarkCompletionExact,
+  \qquad
+  \varepsilon_i=\frac{|R_i|}{|c_{\mathrm{dark}}|},
+  \qquad
+  \varepsilon_i\le\noiseWall.
+  \label{eq:precision-wall}
+\end{equation}
+The register floor \(N^{-1}\) lies far below binary 64-bit arithmetic.  The audit therefore requires high-precision arithmetic to distinguish exact diophantine zeros from numerical artifacts.  This is a structural requirement of the finite block, not an optional numerical refinement.
+
+\subsection{Singular topological projector}
+Let the audited coordinate tuple be
+\begin{equation}
+  x=(k_{D_5},k_{A_1},k_{A_2},N,\kappa_{D_5}),
+  \qquad
+  x_*=(\benchmarkParentLevel,\benchmarkLeptonLevel,\benchmarkQuarkLevel,\modularHorizonBits,\simplexPrefactor).
+  \label{eq:anchor-point}
+\end{equation}
+The admissible topological moduli space is the singleton
+\begin{equation}
+  \mathcal{M}_{\mathrm{top}}=\{x_*\}.
+  \label{eq:singleton-moduli}
+\end{equation}
+The singular projector is
+\begin{equation}
+  P_{\rm top}(x)=
+  \begin{cases}
+    x_*, & x=x_*,\\
+    \bot, & x\neq x_*,
+  \end{cases}
+  \label{eq:ptop}
+\end{equation}
+where \(\bot\) is not a nearby point but an inadmissible off-shell state.  The finite defect tensor used by the audit is the recomputed channel vector
+\begin{equation}
+\begin{aligned}
+  \mathbf{r}(x)=(&r_{\mathrm{root}},r_{\mathrm{int}},r_{A_1},r_{A_2},
+    r_{\Delta},r_T,r_{c},r_{\kappa},r_N),\\
+  r_{\mathrm{root}}&=\left(\sum_s\|\theta_s\|^2(k_s-k_{s,*})^2\right)^{1/2},\\
+  r_{\mathrm{int}}&=\max_s\operatorname{dist}(k_s,\mathbb{Z}),\\
+  r_{A_1}&=\operatorname{dist}\!\left(\frac{k_{D_5}}{2k_{A_1}},\mathbb{Z}\right),
+    \qquad
+  r_{A_2}=\operatorname{dist}\!\left(\frac{k_{D_5}}{3k_{A_2}},\mathbb{Z}\right),\\
+  r_{\Delta}&=\max(r_{A_1},r_{A_2}),
+    \qquad
+  r_T=\left|e^{2\pi\ii r_{\Delta}}-1\right|,\\
+  r_c&=\max_s\left|\exp\!\left[-\frac{2\pi\ii}{24}
+    (c_s(k_s)-c_s(k_{s,*}))\right]-1\right|,\\
+  r_{\kappa}&=\left|\frac{\kappa_{D_5}}{\kappa_{D_5}^{\mathrm{derived}}(k_{A_1})}-1\right|,
+    \qquad
+  r_N=\left|\frac{N}{N_*}-1\right|.
+\end{aligned}
+\label{eq:finite-defect-tensor}
+\end{equation}
+with \(s\in\{D_5,A_1,A_2\}\) and \(c_s(k)=k\dim\mathfrak{g}_s/(k+h_s^\vee)\).  Thus \(\|\mathbf{r}(x_*)\|_2=0\), while every off-anchor coordinate that breaks a root, lattice, framing, phase, prefactor, or capacity channel gives \(\|\mathbf{r}(x)\|_2>0\).  The singular topological closure norm is correspondingly
+\begin{equation}
+  \|\Eclosure(x)\|=
+  \begin{cases}
+    0, & \|\mathbf{r}(x)\|_2=0,\\
+    +\infty, & \|\mathbf{r}(x)\|_2>0.
+  \end{cases}
+  \label{eq:closure-norm}
+\end{equation}
+Thus every nonzero continuous coordinate displacement has infinite response:
+\begin{equation}
+  \boxed{
+  \delta x \neq 0
+  \implies
+  \frac{\|\Eclosure(x_*+\delta x)-\Eclosure(x_*)\|}{\|\delta x\|}=+\infty.
+  }
+  \label{eq:infinite-derivative}
+\end{equation}
+This is the stiff Jacobian singularity.  It is not an ill-conditioned smooth model and not a policy assignment of infinity from \(\delta x\neq0\) alone: the finite channel vector is recomputed first, and the infinite response follows from pushing a nonzero defect against the zero tangent norm of the singleton topological moduli space.  There is no tangent direction, no continuous renormalization dial, and no acceptable coordinate tweak of a level, a capacity, or \(\kappa_{D_5}\).
+
+\section{Audit Taxonomy: Foundations Versus Internal Checks}
+
+The computational ledger is deliberately split into two epistemic classes.
+
+\subsection{Category A: independent topological foundations}
+
+Category A contains data that are not obtained by feeding the target closure identity back into itself.  The visible-branch framing arithmetic is evaluated exactly at the level of rational numbers:
+\begin{equation}
+  \frac{\benchmarkParentLevel}{2\benchmarkLeptonLevel}=6,
+  \qquad
+  \frac{\benchmarkParentLevel}{3\benchmarkQuarkLevel}=13,
+  \qquad
+  \Delta_{\mathrm{fr}}=0.
+\end{equation}
+Likewise, the tractable \(\SU(2)_{\benchmarkLeptonLevel}\) and \(\SU(3)_{\benchmarkQuarkLevel}\) Frobenius--Perron checks are small-sector topological computations.  They are either direct fusion-matrix extractions or closed Verlinde/Weyl evaluations inside finite primary sets of sizes \(27\) and \(45\).  These entries are therefore independent finite-algebra inputs to the static block.
+
+\subsection{Category B: internal consistency and sanity checks}
+
+Category B contains internal closure audits.  These checks are necessary, but they are not advertised as independent external proofs.  The mass-gap identity
+\begin{equation}
+  N\left(\frac{m}{\kappa_{D_5}M_P}\right)^4=1
+\end{equation}
+is an algebraic consistency equation for the chosen finite-screen trace normalization.  Its \(-1/4\) exponent is verified as an internal consequence of that identity.
+
+The parent \(\SO(10)_{\benchmarkParentLevel}\) sector is also categorized as an internal consistency channel.  Its full primary count is
+\begin{equation}
+  |P_+^{\benchmarkParentLevel}(D_5)|=6{,}563{,}729{,}615,
+\end{equation}
+so the audit does not construct or diagonalize a full \(6{,}563{,}729{,}615\times6{,}563{,}729{,}615\) fusion matrix.  Instead, it uses the Kac--Peterson/Verlinde diagonalization identities and Weyl denominator formulas on the audited parent blocks.  This is a mathematically standard algebraic bypass of direct matrix diagonalization, but it is a self-consistency test of the encoded VOA data rather than a brute-force independent spectral measurement.
+
+The diagonal trace identities, phase-sensitive modular-\(T\) character intersection checks, mass-gap closure residuals, and off-shell stiffness probes are therefore reported as internal consistency and sanity checks.  They verify that the finite static block is implemented coherently; they do not convert the static block into a fitted cosmological model or an empirical scale-setting pipeline.
+
+\section{Closure Ledger}
+
+The standalone closure conditions are
+\begin{equation}
+\begin{aligned}
+  &N=\modularHorizonBits,\qquad \varepsilon_N=N^{-1},\\
+  &\Delta_{\mathrm{fr}}=0,
+    \qquad e^{2\pi\ii\Delta_{\mathrm{fr}}}=1,\\
+  &\fusion_\lambda\fusion_\mu=\sum_\nu N_{\lambda\mu}^{\nu}\fusion_\nu,
+    \qquad N_{\lambda\mu}^{\nu}\in\mathbb{Z}_{\ge0},\\
+  &\fusion_\lambda\mathbf{d}=d_\lambda\mathbf{d},
+    \qquad d_\lambda=\FP(\fusion_\lambda),\\
+  &Z_N(\tau+1)-Z_N(\tau)=0,
+    \qquad \Theta_N(m)-1=0,\\
+  &m=\simplexPrefactor\,M_P(\modularHorizonBits)^{-1/4},
+    \qquad \frac{\dd\log m}{\dd\log N}=-\frac14,\\
+  &\mathbf{r}(x_*)=0,
+    \qquad \|\mathbf{r}(x_*+\delta x)\|_2>0\quad(\delta x\neq0\ \text{off anchor}),\\
+  &\mathcal{M}_{\mathrm{top}}=\{x_*\},
+    \qquad \|\Eclosure(x_*+\delta x)\|=+\infty\quad(\delta x\neq0).
+\end{aligned}
+\label{eq:closure-ledger}
+\end{equation}
+No expanding metric, fluid variation, observational likelihood, or fitted scale-setting hypothesis appears in this ledger.
+
+\section{Conclusion}
+
+The mass gap is generated by finite-capacity topological trace closure.  The \(\SO(10)_{\benchmarkParentLevel}\) parent branch supplies the rigid category, the \(\SU(2)_{\benchmarkLeptonLevel}\) and \(\SU(3)_{\benchmarkQuarkLevel}\) visible sectors supply modular consistency checks, the affine current tower is cut by \(\modularHorizonBits\), and the quartic trace identity forces the \(-1/4\) exponent.  The stiff Jacobian singularity prevents continuous tuning: the admissible parameter space is the single topological anchor \(x_*\).
+
+\end{document}
