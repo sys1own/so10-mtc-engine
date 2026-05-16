@@ -438,12 +438,12 @@ def _code(value: object, digits: int) -> str:
 def _format_decimal(value: object, digits: int) -> str:
     """Format high-precision values without any binary-float conversion."""
 
-    if isinstance(value, mpmath.ctx_mp_python.mpc):
+    if isinstance(value, mpmath.mpc):
         real = _format_decimal(mpmath.re(value), digits)
         imaginary = _format_decimal(abs(mpmath.im(value)), digits)
         sign = "+" if mpmath.im(value) >= 0 else "-"
         return f"({real} {sign} {imaginary}i)"
-    if isinstance(value, mpmath.ctx_mp_python.mpf):
+    if isinstance(value, mpmath.mpf):
         if mpmath.isinf(value):
             return "+inf" if value > 0 else "-inf"
         if mpmath.isnan(value):
