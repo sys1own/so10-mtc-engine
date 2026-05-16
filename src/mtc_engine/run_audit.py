@@ -9,6 +9,9 @@ from typing import Mapping, Sequence
 
 import mpmath
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from mtc_engine.bridge_audit import (
     NOISE_WALL,
     BridgeAuditReport,
