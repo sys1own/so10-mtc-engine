@@ -1,0 +1,37 @@
+name: High-Precision Spectral Closure Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-closure:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: "pip"
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run Rigidity and Category Property Test Suites
+      run: |
+        python -m pytest
+
+    - name: Execute High-Precision CLI Audit Driver
+      run: |
+        python src/mtc_engine/run_audit.py --verify-full-fusion-matrices
