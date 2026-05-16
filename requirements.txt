@@ -1,0 +1,12 @@
+# Spectral-Invariants-MTC numerical baseline
+#
+# Standard IEEE-754 64-bit precision floats are strictly insufficient for this
+# repository: the finite-screen holographic noise floor is 1/N ~= 10^-122, far
+# below double-precision machine epsilon. All numerical paths must therefore be
+# designed around arbitrary-precision or exact arithmetic where invariants are
+# evaluated near rigidity thresholds.
+
+numpy
+scipy
+mpmath
+pytest
